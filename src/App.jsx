@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import './App.css';
 import abi from "./utils/WavePortal.json"
@@ -13,7 +13,7 @@ export default function App() {
 
   const getAllWaves = async () => {
     try {
-      const {ethereum} = window;
+      const { ethereum } = window;
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
@@ -22,7 +22,7 @@ export default function App() {
         const waves = await wavePortalContract.getAllWaves();
 
         let wavesCleaned = [];
-        waves.forEach(wave => wavesCleaned.push ({
+        waves.forEach(wave => wavesCleaned.push({
           address: wave.waver,
           timestamp: new Date(wave.timestamp * 1000),
           message: wave.message
@@ -39,15 +39,15 @@ export default function App() {
 
   const checkIfWalletIsConnected = async () => {
     try {
-      const {ethereum} = window;
+      const { ethereum } = window;
       if (!ethereum) {
         console.log("Metamask not found");
       } else {
         console.log("Ethereum object", ethereum);
       }
 
-      const accounts = await ethereum.request({method: "eth_accounts"})
-      
+      const accounts = await ethereum.request({ method: "eth_accounts" })
+
       if (accounts.length !== 0) {
         const account = accounts[0];
         console.log("Found an authorized account:", account);
@@ -63,14 +63,14 @@ export default function App() {
 
   const connectWallet = async () => {
     try {
-      const {ethereum} = window;
+      const { ethereum } = window;
 
       if (!ethereum) {
         alert("Get Metamask!");
         return;
       }
 
-      const accounts = await ethereum.request({method: "eth_requestAccounts"});
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 
       console.log("Connected", accounts[0])
       setCurrentAccount(accounts[0])
@@ -81,7 +81,7 @@ export default function App() {
   const wave = async () => {
     try {
       setProgress(0);
-      const {ethereum} = window;
+      const { ethereum } = window;
 
       let message = document.getElementById("message").value;
 
@@ -91,7 +91,7 @@ export default function App() {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
-        
+
         setProgress(16.66 * 2);
         let count = await wavePortalContract.getTotalWaves();
         console.log("Retreived total wave count...", count.toNumber());
@@ -107,7 +107,7 @@ export default function App() {
         setProgress(16.66 * 5);
         count = await wavePortalContract.getTotalWaves();
         console.log("Retrieved total wave count...", count.toNumber());
-        
+
         setWaves(count.toNumber());
         setProgress(100);
 
@@ -154,50 +154,78 @@ export default function App() {
       }
     };
   }, []);
-  
+
   return (
-    <div className="mainContainer">
-
-      <div className="dataContainer">
-        <div className="header">
-        👋 Hey there!
+    <div>
+      <section class="hero">
+        <div className="hero-body has-text-centered">
+          <p className="title">
+            👋 Hey there!
+          </p>
+          <p className="subtitle">
+            I am thisHermit. Connect your Ethereum wallet and wave at me!
+            Optionally add a message below.
+            </p>
         </div>
 
-        <div className="bio">
-        I am [Redacted]. Connect your Ethereum wallet and wave at me!
-        Optionally add a message below.
+      </section>
+      <section className="section has-text-centered">
+        <div class="field has-addons has-addons-centered">
+          <div className="control">
+            <input className="input is-primary" type="text" placeholder="Enter your message here" />
+          </div>
+          <div class="control">
+            <button className="button is-primary" onClick={wave}>
+              👋 Wave at me
+              </button>
+          </div>
         </div>
-
-        <textarea id="message" placeholder="Default message"></textarea>
-        <button className="waveButton" onClick={wave}>
-          Wave at Me
-        </button>
 
         {!currentAccount && (
-          <button className="waveButton" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        )}
-        {progress == 0 ? (
-          <div className="bio">
-            Number of waves: {waves}
-          </div>
-        ) : (
-          <div className= "bio">
-            <label className="label" htmlFor="txn">Progress:</label>
-            <progress id="txn" value={progress} max="100"></progress>
-          </div>
-          )
-        }
-        {allWaves.map((wave, index) => 
-          <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px", borderRadius: "10px" }}>
-            <div>Address: {wave.address}</div>
-            <div>Time: {wave.timestamp.toString()}</div>
-            <div>Message: {wave.message}</div>
+          <div className="field">
+            <button className="button is-warning" onClick={connectWallet}>
+              Connect Wallet
+              </button>
           </div>
         )}
-
-      </div>
+      </section>
+      <section className="section">
+      {currentAccount && (
+        <div className="container mt-4">
+          {progress == 0 ? (
+            <p className="title">
+              All Waves 👋 ({allWaves.length})
+            </p>
+          ) : (
+              <div className="container">
+                <progress className="progress is-primary" id="txn" value={progress} max="100"></progress>
+              </div>
+            )
+          }
+          
+            
+            {allWaves.map((wave, index) =>
+              <div key={index} className="card m-4">
+                <div className="card-header">
+                  <p class="card-header-title">
+                    {wave.address.slice(0,5)}...{wave.address.slice(-5)}
+                  </p>
+                </div>
+                <div className="card-content">
+                  <div>{wave.message}</div>
+                </div>
+                <div className="card-footer">
+                  <p className="card-footer-item">
+                    Time: {wave.timestamp.toString()}
+                  </p>
+                </div>
+              </div>
+            )}
+          
+        </div>
+      )}
+      </section>
     </div>
+
   );
 }
