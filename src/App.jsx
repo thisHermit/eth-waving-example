@@ -7,7 +7,6 @@ export default function App() {
   const [currentAccount, setCurrentAccount] = useState("");
   const contractAddress = "0xBb44994B85247665c84Ff538aD7336572E322C6f";
   const contractABI = abi.abi;
-  const [waves, setWaves] = useState(0);
   const [allWaves, setAllWaves] = useState([]);
   const [progress, setProgress] = useState(0);
 
@@ -107,7 +106,6 @@ export default function App() {
         count = await wavePortalContract.getTotalWaves();
         console.log("Retrieved total wave count...", count.toNumber());
 
-        setWaves(count.toNumber());
         setProgress(100);
 
         setTimeout(() => setProgress(0), 2000)
@@ -156,7 +154,7 @@ export default function App() {
 
   return (
     <div>
-      <section class="hero">
+      <section className="hero">
         <div className="hero-body has-text-centered">
           <p className="title">
             👋 Hey there!
@@ -169,11 +167,11 @@ export default function App() {
 
       </section>
       <section className="section has-text-centered">
-        <div class="field has-addons has-addons-centered">
+        <div className="field has-addons has-addons-centered">
           <div className="control">
-            <input className="input is-primary" type="text" placeholder="Enter your message here" />
+            <input id="message" className="input is-primary" type="text" placeholder="Enter your message here" />
           </div>
-          <div class="control">
+          <div className="control">
             <button className="button is-primary" onClick={wave}>
               👋 Wave at me
               </button>
@@ -201,12 +199,10 @@ export default function App() {
               </div>
             )
           }
-          
-            
             {allWaves.map((wave, index) =>
               <div key={index} className="card m-4">
                 <div className="card-header">
-                  <p class="card-header-title">
+                  <p className="card-header-title">
                     {wave.address.slice(0,5)}...{wave.address.slice(-5)}
                   </p>
                 </div>
