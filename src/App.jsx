@@ -173,7 +173,7 @@ export default function App() {
           </div>
           <div className="control">
             <button className="button is-primary" onClick={wave}>
-              👋 Wave at me
+              👋 at me
               </button>
           </div>
         </div>
